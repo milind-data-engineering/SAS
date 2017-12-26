@@ -17,3 +17,8 @@ b) SAS Logic Details:
 2. Data Classification with respect to Borough (1= Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island)
 3. Univariate Analysis
 4. Regression Modelling
+
+c) Problem Statement:
+
+1. Determine which zip codes within a borough prove to be significant for determining sale price of a property
+2. Determine whether total units (cumulative of residential and commercial units), gross square feet and land square feet are significant      for determining the sale price of a property 
