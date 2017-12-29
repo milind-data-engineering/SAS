@@ -1,0 +1,127 @@
+/* Borough 3*/
+
+/* Step 1: Filter the data */
+data nyc_all_s1;
+	set nyc_all;
+	if sale_price>999 and total_units>0 and gross_square_feet>0 and land_square_feet>0;
+	gross_squr= input(gross_square_feet,best.);
+  	land_squr=input(land_square_feet,best.);
+	run;
+
+/* Step 2 : Keep the required fields */
+	data nyc_all_s2;
+	keep borough zip_code total_units land_squr gross_squr sale_price;
+	set nyc_all_s1;
+	run;
+
+/* Step 3: Normalize the data */
+	proc standard data=nyc_all_s2 mean=0 std=1 out=nyc_all_normal; 
+	Var total_units land_squr gross_squr sale_price;
+	run;
+
+/* Step 4: Segregate data for borough 3 and delete all rows with 0 as zipcode and create n columns for n distinct zipcodes in a 
+	       borough */
+data nyc_all_bor_3;
+	set nyc_all_normal;
+
+if borough=3;
+if zip_code=0 then delete;
+
+if zip_code=11228 then v_zip_code_1=1;
+           else v_zip_code_1=0;
+if zip_code=11214 then v_zip_code_2=1;
+           else v_zip_code_2=0;
+if zip_code=11220 then v_zip_code_3=1;
+           else v_zip_code_3=0;
+if zip_code=11209 then v_zip_code_4=1;
+           else v_zip_code_4=0;
+if zip_code=11219 then v_zip_code_5=1;
+           else v_zip_code_5=0;
+if zip_code=11221 then v_zip_code_6=1;
+           else v_zip_code_6=0;
+if zip_code=11233 then v_zip_code_7=1;
+           else v_zip_code_7=0;
+if zip_code=11213 then v_zip_code_8=1;
+           else v_zip_code_8=0;
+if zip_code=11206 then v_zip_code_9=1;
+           else v_zip_code_9=0;
+if zip_code=11216 then v_zip_code_10=1;
+           else v_zip_code_10=0;
+if zip_code=11205 then v_zip_code_11=1;
+           else v_zip_code_11=0;
+if zip_code=11238 then v_zip_code_12=1;
+           else v_zip_code_12=0;
+if zip_code=11226 then v_zip_code_13=1;
+           else v_zip_code_13=0;
+if zip_code=11204 then v_zip_code_14=1;
+           else v_zip_code_14=0;
+if zip_code=11234 then v_zip_code_15=1;
+           else v_zip_code_15=0;
+if zip_code=11217 then v_zip_code_16=1;
+           else v_zip_code_16=0;
+if zip_code=11201 then v_zip_code_17=1;
+           else v_zip_code_17=0;
+if zip_code=11218 then v_zip_code_18=1;
+           else v_zip_code_18=0;
+if zip_code=11232 then v_zip_code_19=1;
+           else v_zip_code_19=0;
+if zip_code=11230 then v_zip_code_20=1;
+           else v_zip_code_20=0;
+if zip_code=11235 then v_zip_code_21=1;
+           else v_zip_code_21=0;
+if zip_code=11212 then v_zip_code_22=1;
+           else v_zip_code_22=0;
+if zip_code=11237 then v_zip_code_23=1;
+           else v_zip_code_23=0;
+if zip_code=11207 then v_zip_code_24=1;
+           else v_zip_code_24=0;
+if zip_code=11236 then v_zip_code_25=1;
+           else v_zip_code_25=0;
+if zip_code=11239 then v_zip_code_26=1;
+           else v_zip_code_26=0;
+if zip_code=11231 then v_zip_code_27=1;
+           else v_zip_code_27=0;
+if zip_code=11249 then v_zip_code_28=1;
+           else v_zip_code_28=0;
+if zip_code=11224 then v_zip_code_29=1;
+           else v_zip_code_29=0;
+if zip_code=11225 then v_zip_code_30=1;
+           else v_zip_code_30=0;
+if zip_code=11208 then v_zip_code_31=1;
+           else v_zip_code_31=0;
+if zip_code=11210 then v_zip_code_32=1;
+           else v_zip_code_32=0;
+if zip_code=11203 then v_zip_code_33=1;
+           else v_zip_code_33=0;
+if zip_code=11229 then v_zip_code_34=1;
+           else v_zip_code_34=0;
+if zip_code=11215 then v_zip_code_35=1;
+	   else v_zip_code_35=0;
+if zip_code=11223 then v_zip_code_36=1;
+	   else v_zip_code_36=0;
+if zip_code=11222 then v_zip_code_37=1;
+	   else v_zip_code_37=0;
+if zip_code=11211 then v_zip_code_38=1;
+ 	   else v_zip_code_38=0;
+run;
+
+/* Step 5: Sort the data as per zip-code */
+proc sort data=nyc_all_bor_3;
+	by zip_code;
+run;
+
+/* Step 6:Run regression on the sorted dataset */
+proc reg data=nyc_all_bor_3;
+
+	model sale_price= total_units gross_squr land_squr v_zip_code_1 --v_zip_code_38 /VIF selection=stepwise slentry=0.05;;
+
+run;
+
+/* Step 7: Perform regression analysis on the variables which have a variance of less than 5% */
+
+proc reg data=nyc_all_bor_3 PLOTS(MAXPOINTS=10000 );
+
+	model sale_price= gross_squr v_zip_code_11 v_zip_code_12 v_zip_code_13 v_zip_code_16 v_zip_code_17 v_zip_code_22 
+					  v_zip_code_27 v_zip_code_28 v_zip_code_31 v_zip_code_35 v_zip_code_38;
+	
+run;
